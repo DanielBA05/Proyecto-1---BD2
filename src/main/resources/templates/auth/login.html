@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container narrow">
+    <h1>Clínica - Login</h1>
+    <div class="alert success" th:if="${param.registered}">Registro exitoso. Ya puedes iniciar sesión.</div>
+    <div class="alert error" th:if="${param.error}">Credenciales inválidas.</div>
+    <div class="alert success" th:if="${param.logout}">Sesión cerrada.</div>
+    <form th:action="@{/login}" method="post">
+        <label>Usuario</label>
+        <input type="text" name="username" required>
+        <label>Contraseña</label>
+        <input type="password" name="password" required>
+        <button type="submit">Ingresar</button>
+    </form>
+    <p><a th:href="@{/registro}">Registrarse como paciente</a></p>
+</div>
+</body>
+</html>

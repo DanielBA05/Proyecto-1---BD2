@@ -1,0 +1,5 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Historial</title><link rel="stylesheet" th:href="@{/css/styles.css}"></head>
+<body><div class="container"><h1>Mi historial de citas</h1><h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+<div class="alert error" th:if="${error}" th:text="${error}"></div><div class="alert success" th:if="${success}" th:text="${success}"></div>
+<table><tr><th>Fecha</th><th>Hora</th><th>Doctor</th><th>Estado</th><th></th></tr><tr th:each="c : ${citas}"><td th:text="${#temporals.format(c.inicioCita, 'dd/MM/yyyy')}"></td><td th:text="|${#temporals.format(c.inicioCita, 'HH:mm')} - ${#temporals.format(c.finCita, 'HH:mm')}|"></td><td th:text="${c.bloque.doctor.usuario.nombre + ' ' + c.bloque.doctor.usuario.apellido1}"></td><td th:text="${c.estadoCita}"></td><td><form th:if="${c.estadoCita.name() == 'RESERVADA'}" th:action="@{'/paciente/historial/' + ${c.id} + '/cancelar'}" method="post"><button type="submit">Cancelar</button></form></td></tr></table><a th:href="@{/paciente}">Volver</a></div></body></html>

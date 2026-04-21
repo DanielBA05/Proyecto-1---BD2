@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Pacientes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Pacientes</h1>
+    <h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+
+    <div th:if="${success}">
+        <p style="color: green;" th:text="${success}"></p>
+    </div>
+
+    <div th:if="${error}">
+        <p style="color: red;" th:text="${error}"></p>
+    </div>
+
+    <table border="1" cellpadding="8">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acción</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${pacientes}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.nombre + ' ' + p.apellido1 + ' ' + p.apellido2}"></td>
+            <td th:text="${p.correo}"></td>
+            <td th:text="${p.telefono}"></td>
+            <td th:text="${p.direccion}"></td>
+            <td>
+                <form th:action="@{/doctor/pacientes/{id}/eliminar(id=${p.id})}" method="post">
+                    <button type="submit"
+                            onclick="return confirm('¿Seguro que desea eliminar este paciente?')">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <br>
+    <a th:href="@{/doctor}">Volver</a>
+</div>
+</body>
+</html>

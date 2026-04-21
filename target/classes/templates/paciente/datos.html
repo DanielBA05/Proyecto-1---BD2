@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Datos paciente</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<div class="container">
+    <h1>Mis datos</h1>
+    <h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+    <div th:if="${success}">
+        <p style="color: green;" th:text="${success}"></p>
+    </div>
+
+    <p>
+        <strong>Usuario:</strong>
+        <span th:text="${username}"></span>
+    </p>
+
+    <form th:action="@{/paciente/datos}" th:object="${datosRequest}" method="post">
+
+        <div>
+            <label>Correo:</label><br>
+            <input type="email" th:field="*{correo}" required>
+        </div>
+
+        <div>
+            <label>Teléfono:</label><br>
+            <input type="text" th:field="*{telefono}" required>
+        </div>
+
+        <div>
+            <label>Dirección:</label><br>
+            <input type="text" th:field="*{direccion}" required>
+        </div>
+
+        <br>
+
+        <button type="submit">Guardar cambios</button>
+    </form>
+
+    <br>
+
+    <a th:href="@{/paciente}">Volver</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generar citas</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Generar cita manual</h1>
+    <h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <div class="alert success" th:if="${success}" th:text="${success}"></div>
+
+    <form th:action="@{/doctor/generar-citas}" th:object="${citaRequest}" method="post" class="grid-two" id="citaForm">
+        <div class="full">
+            <label for="bloqueId">Bloque</label>
+            <select th:field="*{bloqueId}" id="bloqueId" required>
+                <option value="">Seleccione un bloque</option>
+                <option th:each="b : ${bloques}"
+                        th:value="${b.id}"
+                        th:text="|Bloque ${b.id} - ${#temporals.format(b.inicioBloque, 'dd/MM HH:mm')} a ${#temporals.format(b.finBloque, 'HH:mm')}|"
+                        th:attr="data-fecha=${#temporals.format(b.inicioBloque, 'yyyy-MM-dd')},
+                                 data-hora-inicio=${#temporals.format(b.inicioBloque, 'HH:mm')},
+                                 data-hora-fin=${#temporals.format(b.finBloque, 'HH:mm')}">
+                </option>
+            </select>
+        </div>
+
+        <div>
+            <label for="fechaInicioVisible">Fecha inicio cita</label>
+            <input type="date" id="fechaInicioVisible" readonly required>
+        </div>
+
+        <div>
+            <label for="horaInicioVisible">Hora inicio cita</label>
+            <input type="time" id="horaInicioVisible" required>
+        </div>
+
+        <div>
+            <label for="fechaFinVisible">Fecha fin cita</label>
+            <input type="date" id="fechaFinVisible" readonly required>
+        </div>
+
+        <div>
+            <label for="horaFinVisible">Hora fin cita</label>
+            <input type="time" id="horaFinVisible" required>
+        </div>
+
+        <input type="hidden" th:field="*{inicioCita}" id="inicioCita">
+        <input type="hidden" th:field="*{finCita}" id="finCita">
+
+        <div class="full">
+            <button type="submit">Crear cita</button>
+        </div>
+    </form>
+
+    <a th:href="@{/doctor}">Volver</a>
+</div>
+
+<script>
+    const form = document.getElementById('citaForm');
+    const bloqueSelect = document.getElementById('bloqueId');
+
+    const fechaInicioVisible = document.getElementById('fechaInicioVisible');
+    const horaInicioVisible = document.getElementById('horaInicioVisible');
+    const fechaFinVisible = document.getElementById('fechaFinVisible');
+    const horaFinVisible = document.getElementById('horaFinVisible');
+
+    const inicioCitaHidden = document.getElementById('inicioCita');
+    const finCitaHidden = document.getElementById('finCita');
+
+    function limpiarCamposCita() {
+        fechaInicioVisible.value = '';
+        horaInicioVisible.value = '';
+        fechaFinVisible.value = '';
+        horaFinVisible.value = '';
+        inicioCitaHidden.value = '';
+        finCitaHidden.value = '';
+    }
+
+    function actualizarHiddenFields() {
+        if (fechaInicioVisible.value && horaInicioVisible.value) {
+            inicioCitaHidden.value = `${fechaInicioVisible.value}T${horaInicioVisible.value}`;
+        } else {
+            inicioCitaHidden.value = '';
+        }
+
+        if (fechaFinVisible.value && horaFinVisible.value) {
+            finCitaHidden.value = `${fechaFinVisible.value}T${horaFinVisible.value}`;
+        } else {
+            finCitaHidden.value = '';
+        }
+    }
+
+    function cargarDatosBloqueSeleccionado() {
+        const option = bloqueSelect.options[bloqueSelect.selectedIndex];
+
+        if (!option || !option.value) {
+            limpiarCamposCita();
+            return;
+        }
+
+        const fecha = option.getAttribute('data-fecha');
+        const horaInicio = option.getAttribute('data-hora-inicio');
+        const horaFin = option.getAttribute('data-hora-fin');
+
+        fechaInicioVisible.value = fecha;
+        fechaFinVisible.value = fecha;
+
+        horaInicioVisible.value = horaInicio;
+        horaFinVisible.value = horaFin;
+
+        actualizarHiddenFields();
+    }
+
+    bloqueSelect.addEventListener('change', cargarDatosBloqueSeleccionado);
+    horaInicioVisible.addEventListener('input', actualizarHiddenFields);
+    horaInicioVisible.addEventListener('change', actualizarHiddenFields);
+    horaFinVisible.addEventListener('input', actualizarHiddenFields);
+    horaFinVisible.addEventListener('change', actualizarHiddenFields);
+
+    form.addEventListener('submit', function (e) {
+        actualizarHiddenFields();
+
+        if (!inicioCitaHidden.value || !finCitaHidden.value) {
+            e.preventDefault();
+            alert('Debes seleccionar un bloque y completar las horas de la cita.');
+        }
+    });
+
+    if (bloqueSelect.value) {
+        cargarDatosBloqueSeleccionado();
+    }
+</script>
+</body>
+</html>

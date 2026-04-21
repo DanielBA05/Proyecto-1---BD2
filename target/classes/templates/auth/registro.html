@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro Paciente</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Registro de paciente</h1>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <form th:action="@{/registro}" th:object="${registro}" method="post" class="grid-two">
+        <div><label>Username</label><input th:field="*{username}" required></div>
+        <div><label>Correo</label><input type="email" th:field="*{correo}" required></div>
+        <div><label>Contraseña</label><input type="password" th:field="*{password}" required></div>
+        <div><label>Confirmar contraseña</label><input type="password" th:field="*{confirmPassword}" required></div>
+        <div><label>Nombre</label><input th:field="*{nombre}" required></div>
+        <div><label>Primer apellido</label><input th:field="*{apellido1}" required></div>
+        <div><label>Segundo apellido</label><input th:field="*{apellido2}"></div>
+        <div><label>Teléfono</label><input th:field="*{telefono}"></div>
+        <div><label>Fecha nacimiento</label><input type="date" th:field="*{fechaNacimiento}"></div>
+        <div>
+            <label>Sexo</label>
+            <select th:field="*{sexo}" required>
+                <option value="">Seleccione</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+            </select>
+        </div>
+        <div class="full"><label>Dirección</label><input th:field="*{direccion}"></div>
+        <div class="full actions">
+            <button type="submit">Crear cuenta</button>
+            <a th:href="@{/login}">Volver</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bloques</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Bloques horarios</h1>
+    <h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <div class="alert success" th:if="${success}" th:text="${success}"></div>
+
+    <form th:action="@{/doctor/bloques}" th:object="${bloqueRequest}" method="post" class="grid-two" id="bloqueForm">
+        <div>
+            <label for="inicioBloque">Inicio</label>
+            <input type="datetime-local" th:field="*{inicioBloque}" id="inicioBloque" required>
+        </div>
+
+        <div>
+            <label for="fechaFinVisible">Fecha fin</label>
+            <input type="date" id="fechaFinVisible" readonly required>
+        </div>
+
+        <div>
+            <label for="horaFinVisible">Hora fin</label>
+            <input type="time" id="horaFinVisible" required>
+        </div>
+
+        <input type="hidden" th:field="*{finBloque}" id="finBloque">
+
+        <div class="full">
+            <button type="submit">Reservar bloque</button>
+        </div>
+    </form>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="b : ${bloques}">
+            <td th:text="${b.id}"></td>
+            <td th:text="${#temporals.format(b.inicioBloque, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${#temporals.format(b.finBloque, 'dd/MM/yyyy HH:mm')}"></td>
+            <td th:text="${b.estadoBloque}"></td>
+        </tr>
+    </table>
+
+    <a th:href="@{/doctor}">Volver</a>
+</div>
+
+<script>
+    const form = document.getElementById('bloqueForm');
+    const inicioInput = document.getElementById('inicioBloque');
+    const fechaFinVisible = document.getElementById('fechaFinVisible');
+    const horaFinVisible = document.getElementById('horaFinVisible');
+    const finBloqueHidden = document.getElementById('finBloque');
+
+    function sincronizarFechaFin() {
+        const inicioValor = inicioInput.value;
+
+        if (!inicioValor || !inicioValor.includes('T')) {
+            fechaFinVisible.value = '';
+            return;
+        }
+
+        const [fechaInicio, horaInicio] = inicioValor.split('T');
+
+        fechaFinVisible.value = fechaInicio;
+
+        if (!horaFinVisible.value) {
+            horaFinVisible.value = horaInicio;
+        }
+
+        actualizarFinHidden();
+    }
+
+    function actualizarFinHidden() {
+        if (fechaFinVisible.value && horaFinVisible.value) {
+            finBloqueHidden.value = `${fechaFinVisible.value}T${horaFinVisible.value}`;
+        }
+    }
+
+    inicioInput.addEventListener('change', sincronizarFechaFin);
+    inicioInput.addEventListener('input', sincronizarFechaFin);
+
+    horaFinVisible.addEventListener('change', actualizarFinHidden);
+    horaFinVisible.addEventListener('input', actualizarFinHidden);
+
+    form.addEventListener('submit', function (e) {
+        actualizarFinHidden();
+
+        if (!finBloqueHidden.value) {
+            e.preventDefault();
+            alert('Debes seleccionar una fecha y hora de fin válidas.');
+        }
+    });
+</script>
+</body>
+</html>

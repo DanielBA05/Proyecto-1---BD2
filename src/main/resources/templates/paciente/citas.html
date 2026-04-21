@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Citas disponibles</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<div class="container">
+    <h1>Citas disponibles de la semana</h1>
+    <h3 th:text="'Bienvenido, ' + ${nombreUsuario}"></h3>
+
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <div class="alert success" th:if="${success}" th:text="${success}"></div>
+
+    <div class="week-nav">
+        <a th:href="@{/paciente/citas(fecha=${fechaBase.minusDays(7)})}">Semana anterior</a>
+
+        <span th:text="|Semana de ${#temporals.format(fechaBase.with(T(java.time.DayOfWeek).MONDAY), 'dd/MM/yyyy')}|"></span>
+
+        <a th:href="@{/paciente/citas(fecha=${fechaBase.plusDays(7)})}">Semana siguiente</a>
+    </div>
+
+    <table>
+        <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Doctor</th>
+            <th>Especialidad</th>
+            <th></th>
+        </tr>
+        <tr th:each="c : ${citas}">
+            <td th:text="${#temporals.format(c.inicioCita, 'dd/MM/yyyy')}"></td>
+            <td th:text="|${#temporals.format(c.inicioCita, 'HH:mm')} - ${#temporals.format(c.finCita, 'HH:mm')}|"></td>
+            <td th:text="${c.bloque.doctor.usuario.nombre + ' ' + c.bloque.doctor.usuario.apellido1}"></td>
+            <td th:text="${c.bloque.doctor.especialidad}"></td>
+            <td>
+                <form th:action="@{'/paciente/citas/' + ${c.id} + '/reservar'}" method="post">
+                    <button type="submit">Reservar</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <a th:href="@{/paciente}">Volver</a>
+</div>
+</body>
+</html>
