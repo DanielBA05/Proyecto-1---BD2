@@ -84,7 +84,7 @@ public class CitaService {
         }
 
         if (citaRepository.existeTraslapeEnBloque(bloque.getId(), inicioCita, finCita)) {
-            throw new IllegalArgumentException("La cita se traslapa con otra ya creada dentro de ese bloque");
+            throw new IllegalArgumentException("La cita choca con otra ya creada dentro de ese bloque");
         }
 
         Cita cita = new Cita();
